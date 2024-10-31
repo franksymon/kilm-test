@@ -2,12 +2,14 @@ from sqlmodel import Session, select, func
 from fastapi_pagination.ext.sqlmodel import paginate
 from fastapi_pagination import Params
 
+from app.user.service import get_user_by_id
 
 # Config
 from app.core.security import verify_password, hash_password
 
 # Utils
 from app.utils.responses import ResponseHandler
+from app.utils.enum_role import RoleEnum
 
 # Models
 from app.operation.model import OperationStatus, OperationEntity
@@ -24,13 +26,39 @@ def get_operation_by_id(db: Session, id: int):
     operation = db.get(OperationEntity, id)
     if not operation:
         raise ResponseHandler.not_found_error("Operation", id)
+    
+    if operation.is_closed:
+        raise ResponseHandler.is_not_active("Operation", operation.title)
     return operation
+
+def create_operation(db: Session, operation: OperationEntity):
+
+    user = get_user_by_id(db=db, user_id=operation.operator_id)
+    if user.role.name in [RoleEnum.OPERATOR.value, RoleEnum.ADMIN.value]:
+        raise ResponseHandler.is_not_operator("User", user.username)
+
+    operation_exists = db.exec(select(OperationEntity).where(OperationEntity.title == operation.title)).first()
+    if operation_exists:
+        raise ResponseHandler.already_exist_error("Operation", operation_exists.id)
+    
+    db_operation = OperationEntity.model_validate(operation, update={"created_by": user.email})
+    db.add(db_operation)
+    db.commit()
+    db.refresh(db_operation)
+    return db_operation
 
 def update_operation(db: Session, operation: OperationEntity):
 
     db_operation = db.get(OperationEntity, operation.id)
     if not db_operation:
         raise ResponseHandler.not_found_error("Operation", operation.id)
+    
+    user = get_user_by_id(db=db, user_id=operation.operator_id)
+    if user.role.name in [RoleEnum.OPERATOR.value, RoleEnum.ADMIN.value]:
+        raise ResponseHandler.is_not_operator("User", user.username)
+    
+    if not db_operation.is_closed:
+        raise ResponseHandler.is_not_active("Operation", db_operation.title)
     
     if operation.title:
         db_operation.title = operation.title
@@ -60,19 +88,7 @@ def delete_operation(db: Session, id: int):
 
 
 
-def create_operation(db: Session, operation: OperationEntity):
-
-    operation_exists = db.exec(select(OperationEntity).where(OperationEntity.title == operation.title)).first()
-    if operation_exists:
-        raise ResponseHandler.already_exist_error("Operation", operation_exists.id)
-    
-    db_operation = OperationEntity.model_validate(operation, update={"created_by": "user_test"})
-    
-    db.add(db_operation)
-    db.commit()
-    db.refresh(db_operation)
-    return db_operation
-
+# State Operation
 def create_state_operation(db: Session, state_operation: OperationStatus):
     
     state_operation_exists = db.exec(select(OperationStatus).where(OperationStatus.name == state_operation.name)).first()
