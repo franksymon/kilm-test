@@ -52,13 +52,13 @@ def get_bid_by_id_controller(db: SessionDep, id: int):
 
 
 @router.post("/", response_model=BidBaseSchema)
-def create_bid_controller(db: SessionDep, bid: BidCreateSchema, user: str = Depends(get_current_active_user)):
-    return create_bid(db=db, bid=bid, user=user)
+def create_bid_controller(db: SessionDep, bid: BidCreateSchema,):
+    return create_bid(db=db, bid=bid)
 
 
 @router.put("/{id}", response_model=BidBaseSchema)
-def update_bid_controller(db: SessionDep, id: int, bid: BidCreateSchema, user: str = Depends(get_current_active_user)):
-    return update_bid(db=db, bid_id=id, bid=bid, user=user)
+def update_bid_controller(db: SessionDep, id: int, bid: BidCreateSchema):
+    return update_bid(db=db, bid_id=id, bid=bid)
 
 
 @router.delete("/{id}")
