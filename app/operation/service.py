@@ -34,8 +34,8 @@ def get_operation_by_id(db: Session, id: int):
 def create_operation(db: Session, operation: OperationEntity):
 
     user = get_user_by_id(db=db, user_id=operation.operator_id)
-    if user.role.name in [RoleEnum.OPERATOR.value, RoleEnum.ADMIN.value]:
-        raise ResponseHandler.is_not_operator("User", user.username)
+    if not user.role.name in [RoleEnum.OPERATOR.value, RoleEnum.ADMIN.value]:
+        raise ResponseHandler.is_not_operator(user.username)
 
     operation_exists = db.exec(select(OperationEntity).where(OperationEntity.title == operation.title)).first()
     if operation_exists:
@@ -54,8 +54,8 @@ def update_operation(db: Session, operation: OperationEntity):
         raise ResponseHandler.not_found_error("Operation", operation.id)
     
     user = get_user_by_id(db=db, user_id=operation.operator_id)
-    if user.role.name in [RoleEnum.OPERATOR.value, RoleEnum.ADMIN.value]:
-        raise ResponseHandler.is_not_operator("User", user.username)
+    if not user.role.name in [RoleEnum.OPERATOR.value, RoleEnum.ADMIN.value]:
+        raise ResponseHandler.is_not_operator(user.username)
     
     if not db_operation.is_closed:
         raise ResponseHandler.is_not_active("Operation", db_operation.title)
@@ -71,7 +71,7 @@ def update_operation(db: Session, operation: OperationEntity):
     if operation.is_closed:
         db_operation.is_closed = operation.is_closed
 
-    db_operation.updated_by = "user_test"
+    db_operation.updated_by = user.email
     db_operation.time_updated = func.now()
     db.add(db_operation)
     db.commit() 
