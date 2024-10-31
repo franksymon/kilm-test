@@ -19,7 +19,7 @@ class BidEntity(BaseModel, table=True):
     operation_id: int = Field(foreign_key="operations.id")
 
     investor: UserEntity = Relationship(back_populates="bids")
-    operation: OperationEntity = Relationship(back_populates="bids")
+    operations: OperationEntity = Relationship(back_populates="bids")
 
     created_by: str = Field(sa_column=Column(String, nullable=False))
     updated_by: Optional[str] = Field(default=None, nullable=True)

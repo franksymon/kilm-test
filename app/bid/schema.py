@@ -3,11 +3,18 @@ from datetime import datetime, date
 from typing import Optional
 
 from app.user.schema import InvestorSchema
-from app.operation.schema import OperationSchema
+from app.operation.schema import OperationBidSchema
 
 class BidBaseSchema(SQLModel):
+    id: int
     amount: float
     interest_rate: float
     investor : Optional[InvestorSchema]
-    operation: str
+    operations: Optional[OperationBidSchema]
+
+class BidCreateSchema(SQLModel):
+    amount: float
+    interest_rate: float
+    investor_id: int
+    operation_id: int
    
