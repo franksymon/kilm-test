@@ -21,14 +21,14 @@ from app.auth.schema import Token
 router = APIRouter(tags=["auth"], prefix="/login")
 
 
-@router.post("/signup")
-async def signup():
-    ...
+# @router.post("/signup")
+# async def signup():
+#     ...
 
 @router.post("/access-token")
 def login_access_token(db: SessionDep,  form_data: Annotated[OAuth2PasswordRequestForm, Depends()]) -> Token:
     
-    user = authenticate(db=db, email=form_data.username, password=form_data.password)
+    user = authenticate(db=db, username=form_data.username, password=form_data.password)
 
     if not user:
         raise HTTPException(
