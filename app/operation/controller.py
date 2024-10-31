@@ -49,7 +49,7 @@ def get_operation_by_id_controller(db: SessionDep, id: int):
 def create_operation_controller(db: SessionDep, operation: OperationCreateSchema):
     return create_operation(db=db, operation=operation)
 
-@router.put("/{id}", response_model=OperationBaseSchema)
+@router.put("", response_model=OperationBaseSchema)
 def update_operation_controller(db: SessionDep, operation: UpdateOperationSchema):
     return update_operation(db=db, operation=operation)
 
@@ -57,6 +57,7 @@ def update_operation_controller(db: SessionDep, operation: UpdateOperationSchema
 def delete_operation_controller(db: SessionDep, id: int):
     return delete_operation(db=db, id=id)
 
+# State Operation
 @router.get("/state/all", response_model=Page[StateOperationBaseSchema])
 def get_all_state_operations_controller(db: SessionDep, params: Params = Depends()):
     return get_all_state_operation(db=db, params=params)

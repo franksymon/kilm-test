@@ -1,5 +1,5 @@
 from fastapi import HTTPException, status
-from app.utils.enum_role import RoleEnum
+from app.utils.enum.enum_role import RoleEnum
 
 
 class ResponseHandler:
@@ -45,6 +45,9 @@ class ResponseHandler:
     @staticmethod
     def is_not_investor(name=""):
         message = f"{name} Not Role {RoleEnum.INVESTOR.value}!"
+        raise HTTPException(status_code=status.HTTP_400_BAD_REQUEST, detail=message)
+    
+    def invalid_amount_bid(message=""):
         raise HTTPException(status_code=status.HTTP_400_BAD_REQUEST, detail=message)
     
     @staticmethod

@@ -9,7 +9,7 @@ from app.core.security import verify_password, hash_password
 
 # Utils
 from app.utils.responses import ResponseHandler
-from app.utils.enum_role import RoleEnum
+from app.utils.enum.enum_role import RoleEnum
 
 # Models
 from app.operation.model import OperationStatus, OperationEntity
@@ -28,7 +28,7 @@ def get_operation_by_id(db: Session, id: int):
         raise ResponseHandler.not_found_error("Operation", id)
     
     if operation.is_closed:
-        raise ResponseHandler.is_not_active("Operation", operation.title)
+        raise ResponseHandler.is_not_active(f"Operation {operation.title}")
     return operation
 
 def create_operation(db: Session, operation: OperationEntity):
@@ -52,14 +52,12 @@ def update_operation(db: Session, operation: OperationEntity):
     db_operation = db.get(OperationEntity, operation.id)
     if not db_operation:
         raise ResponseHandler.not_found_error("Operation", operation.id)
+        
+    if db_operation.is_closed:
+        raise ResponseHandler.is_not_active(db_operation.title)
     
-    user = get_user_by_id(db=db, user_id=operation.operator_id)
-    if not user.role.name in [RoleEnum.OPERATOR.value, RoleEnum.ADMIN.value]:
-        raise ResponseHandler.is_not_operator(user.username)
-    
-    if not db_operation.is_closed:
-        raise ResponseHandler.is_not_active("Operation", db_operation.title)
-    
+    if operation.amount_required:
+        db_operation.amount_required = operation.amount_required
     if operation.title:
         db_operation.title = operation.title
     if operation.description:
@@ -71,7 +69,7 @@ def update_operation(db: Session, operation: OperationEntity):
     if operation.is_closed:
         db_operation.is_closed = operation.is_closed
 
-    db_operation.updated_by = user.email
+    db_operation.updated_by = "user_session"
     db_operation.time_updated = func.now()
     db.add(db_operation)
     db.commit() 

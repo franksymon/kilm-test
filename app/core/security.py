@@ -60,7 +60,7 @@ def create_access_token(user: UserEntity | Any, expires_delta: timedelta) -> str
         "exp": expire,
         "sub": str(user.id),
         "email": user.email,
-        "role": user.role,
+        "role": user.role.name,
     }
     encoded_jwt = encode(to_encode, settings.SECRET_KEY, algorithm=settings.ALGORITHM)
     return encoded_jwt

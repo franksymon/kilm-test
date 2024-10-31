@@ -48,7 +48,7 @@ def get_bids_by_operation_controller(db: SessionDep, operation_id: int, params: 
 
 @router.get("/{id}", response_model=BidBaseSchema)
 def get_bid_by_id_controller(db: SessionDep, id: int):
-    return get_bid_by_id(db=db, id=id)
+    return get_bid_by_id(db=db, bid_id=id)
 
 
 @router.post("", response_model=BidBaseSchema)
