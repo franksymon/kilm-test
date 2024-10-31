@@ -1,14 +1,50 @@
 # kilm-test
 
-Development
+Este proyecto expone, a través del lenguaje **Python versión 3.11**, framework **fastapi**, ORM **sqlmodel**, las apis necesarias para cumplimiento de test 
+
+Para la arquitectura del proyecto, se implementa una estructura API REST con las siguientes capas:
+* **Controller**: Carpeta que contiene los controladores o routers.
+* **Services**: Carpeta que contiene la capa lógica de los controladores.
+* **Model**: Carpeta que contiene la capa lógica de los Modelos en Base de datos.
+* **Schema**: Carpeta que contiene la capa lógica de los Modelos para la serializacion de los datos de los servicios.
+
+* **Config**: Carpeta que contiene archivos de definiciones de variables de entorno por parte del cliente.
+* **Util**: Carpeta que contiene funciones comunes.
+* **Tools**: Carpeta que contiene la librería proporcionada por el fabricante de la impresora fiscal Tfhka V-8.5 (**integration@thefactoryhka.com**).
+
+### Entorno Virtual
+
+Es recomendable utilizar un entorno virtual para ejecutar el proyecto. Para crear un entorno virtual en Windows, ejecute el siguiente comando en el directorio del proyecto clonado:
+
+```sh
+python -m venv .venv
+```
+Activacion del entorno virtual, terminal bash:
+
+```sh
+source .venv/script/activate
+```
+
+### Run project
+
+Para ejecutar el proyecto se requiere inicialmente tener las librerías necesarias para la ejecución. Para realizar la instalación ejecutar el siguiente comando en el directorio del proyecto clonado: 
+
+```sh
+pip install -r requirements.txt
+```
+
+### Development
 ```sh
 fastapi dev
 ```
 
-Produccion
+### Produccion
 ```sh
 fastapi run 
 ```
+
+Se utiliza **Swagger** para la documentación de las API, para consultar la documentación de los servicios:
+* [http://127.0.0.1:8000/docs](http://127.0.0.1:8000/docs) 
 
 
 ## Lógica de Negocios
