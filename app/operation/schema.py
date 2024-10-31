@@ -6,7 +6,10 @@ from pydantic import field_validator
 if TYPE_CHECKING:
     from app.user.schema import OperatorSchema
 
-
+class StateOperationBaseSchema(SQLModel):
+    id: int
+    name: str
+    description: Optional[str]
 
 class OperationBaseSchema(SQLModel):
     id: int
@@ -18,7 +21,7 @@ class OperationBaseSchema(SQLModel):
     is_closed: bool
     
     operator: Optional["OperatorSchema"]
-    status: Optional[lambda:StateOperationBaseSchema]
+    status: Optional[StateOperationBaseSchema]
 
 class UpdateOperationSchema(SQLModel):
     id: int
@@ -48,8 +51,7 @@ class OperationBidSchema(SQLModel):
     deadline: Optional[datetime]
     is_closed: bool  
     
-    status: Optional[lambda:StateOperationBaseSchema]
-
+    status: Optional[StateOperationBaseSchema]
 
 
 # State Operation
@@ -65,7 +67,3 @@ class StateOperationCreateSchema(SQLModel):
 class StateOperationUpdateSchema(StateOperationCreateSchema):
     id: int
 
-class StateOperationBaseSchema(SQLModel):
-    id: int
-    name: str
-    description: Optional[str]
