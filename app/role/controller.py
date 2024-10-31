@@ -27,14 +27,14 @@ def get_all_role_controller(db: SessionDep, params: Params = Depends()):
 def create_role_controller(db: SessionDep, role: RoleCreateSchema):
     return create_role(db=db, role=role)
 
-@router.get("/{id}", response_model=RoleBaseSchema)
-def get_role_by_id_controller(db: SessionDep, id: int):
-    return get_role_by_id(db=db, id=id)
+@router.get("/{role_id}", response_model=RoleBaseSchema)
+def get_role_by_id_controller(db: SessionDep, role_id: int):
+    return get_role_by_id(db=db, role_id=id)
 
-@router.put("/{id}", response_model=RoleBaseSchema)
+@router.put("", response_model=RoleBaseSchema)
 def update_state_role_controller(db: SessionDep, role: RoleUpdateSchema):
     return update_role(db=db, role=role)
 
-@router.delete("/{id}")
-def delete_role_controller(db: SessionDep, id: int):
-    return delete_role(db=db, id=id)
+@router.delete("/{role_id}")
+def delete_role_controller(db: SessionDep, role_id: int):
+    return delete_role(db=db, id=role_id)

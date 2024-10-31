@@ -58,7 +58,10 @@ def create_bid(db: Session, bid: BidCreateSchema):
     if not investor.role.name in [RoleEnum.INVESTOR.value, RoleEnum.ADMIN.value]:
         raise ResponseHandler.is_not_investor(investor.username)
 
-    operation = get_operation_by_id(db=db, id=bid.operation_id)
+    operation = get_operation_by_id(db=db, operation_id=bid.operation_id)
+
+    if operation.is_closed:
+        raise ResponseHandler.is_not_active(f"Operation {operation.title}")
 
     if bid.amount > operation.amount_required:
         raise ResponseHandler.invalid_amount_bid(
@@ -77,10 +80,19 @@ def create_bid(db: Session, bid: BidCreateSchema):
     db.add(db_bid)
     db.commit()
     db.refresh(db_bid)
+
+    # Actulizar Operation is_closed si alcanza el monto requerido
+    total_operation_amount = sum(x.amount for x in operation.bids)
+    if total_operation_amount == operation.amount_required:
+        operation.is_closed = True  
+        db.add(operation)
+        db.commit()
+        db.refresh(operation)
+
     return db_bid
 
 
-def update_bid(db: Session, bid_id: int, bid: BidCreateSchema):
+def update_bid(db: Session,  bid: BidCreateSchema):
     
     investor = get_user_by_id(db=db, user_id=bid.investor_id)
     
@@ -88,8 +100,11 @@ def update_bid(db: Session, bid_id: int, bid: BidCreateSchema):
         raise ResponseHandler.is_not_investor(investor.username)
     
     operation = get_operation_by_id(db=db, id=bid.operation_id)
+
+    if operation.is_closed:
+        raise ResponseHandler.is_not_active(f"Operation {operation.title}")
     
-    db_bid = get_bid_by_id(db=db, bid_id=bid_id)
+    db_bid = get_bid_by_id(db=db, bid_id=bid.id)
     
     if bid.amount: 
         db_bid.amount = bid.amount

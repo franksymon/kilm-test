@@ -22,13 +22,10 @@ def get_all_state_operation(db: Session, params: Params):
     query = select(OperationStatus)
     return paginate(db, query, params)  
 
-def get_operation_by_id(db: Session, id: int):
-    operation = db.get(OperationEntity, id)
+def get_operation_by_id(db: Session, operation_id: int):
+    operation = db.get(OperationEntity, operation_id)
     if not operation:
-        raise ResponseHandler.not_found_error("Operation", id)
-    
-    if operation.is_closed:
-        raise ResponseHandler.is_not_active(f"Operation {operation.title}")
+        raise ResponseHandler.not_found_error("Operation", operation_id)
     return operation
 
 def create_operation(db: Session, operation: OperationEntity):

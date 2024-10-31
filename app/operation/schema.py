@@ -23,12 +23,12 @@ class OperationBaseSchema(SQLModel):
 
 class UpdateOperationSchema(SQLModel):
     id: int
-    amount_required: float | None
-    title: str | None
-    description: str | None
-    annual_interest: float | None
-    deadline: Optional[date] | None
-    is_closed: bool | None
+    amount_required: float | None = None
+    title: str | None = None
+    description: str | None = None
+    annual_interest: float | None = None
+    deadline: Optional[date] | None = None
+    is_closed: bool | None = None
 
 class OperationCreateSchema(SQLModel):
     amount_required: float

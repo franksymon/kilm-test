@@ -12,6 +12,7 @@ from app.user.controller import router as user_router
 from app.auth.controller import router as login_router
 from app.role.controller import router as role_router
 from app.operation.controller import router as operation_router
+from app.operation.controller import state_operation as state_operation_router
 from app.bid.controller import router as bid_router
 
 
@@ -53,6 +54,7 @@ def register_routes(app):
     app.include_router(login_router, prefix=prefix)
     app.include_router(role_router, prefix=prefix)
     app.include_router(operation_router, prefix=prefix)
+    app.include_router(state_operation_router, prefix=prefix)
     app.include_router(bid_router, prefix=prefix)
     
 

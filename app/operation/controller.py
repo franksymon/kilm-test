@@ -35,15 +35,16 @@ from app.operation.service import (
 
 
 router = APIRouter(tags=["Operation"], prefix="/operation")
+state_operation = APIRouter(tags=["Operation State"], prefix="/operation_state")
 
 
 @router.get("/all", response_model=Page[OperationBaseSchema])
 def get_all_operations_controller(db: SessionDep, params: Params = Depends()):
     return get_all_operation(db=db, params=params)
 
-@router.get("/{id}", response_model=OperationBaseSchema)
-def get_operation_by_id_controller(db: SessionDep, id: int):
-    return get_operation_by_id(db=db, id=id)
+@router.get("/{operation_id}/details", response_model=OperationBaseSchema)
+def get_operation_by_id_controller(db: SessionDep, operation_id: int):
+    return get_operation_by_id(db=db, operation_id=operation_id)
 
 @router.post("", response_model=OperationBaseSchema)
 def create_operation_controller(db: SessionDep, operation: OperationCreateSchema):
@@ -53,27 +54,29 @@ def create_operation_controller(db: SessionDep, operation: OperationCreateSchema
 def update_operation_controller(db: SessionDep, operation: UpdateOperationSchema):
     return update_operation(db=db, operation=operation)
 
-@router.delete("/{id}")
-def delete_operation_controller(db: SessionDep, id: int):
-    return delete_operation(db=db, id=id)
+@router.delete("/{operation_id}")
+def delete_operation_controller(db: SessionDep, operation_id: int):
+    return delete_operation(db=db, id=operation_id)
+
+
 
 # State Operation
-@router.get("/state/all", response_model=Page[StateOperationBaseSchema])
+@state_operation.get("/all", response_model=Page[StateOperationBaseSchema])
 def get_all_state_operations_controller(db: SessionDep, params: Params = Depends()):
     return get_all_state_operation(db=db, params=params)
 
-@router.get("/state/{id}", response_model=StateOperationBaseSchema)
-def get_state_operation_by_id_controller(db: SessionDep, id: int):
-    return get_state_operation_by_id(db=db, id=id)
+@state_operation.get("/{state_operation_id}", response_model=StateOperationBaseSchema)
+def get_state_operation_by_id_controller(db: SessionDep, state_operation_id: int):
+    return get_state_operation_by_id(db=db, id=state_operation_id)
 
-@router.post("/state", response_model=StateOperationBaseSchema)
+@state_operation.post("", response_model=StateOperationBaseSchema)
 def create_state_operation_controller(db: SessionDep, state_operation: StateOperationCreateSchema):
     return create_state_operation(db=db, state_operation=state_operation)
 
-@router.put("/state/{id}")
+@state_operation.put("")
 def update_state_operation_controller(db: SessionDep, state_operation: StateOperationUpdateSchema):
     return update_state_operation(db=db, state_operation=state_operation)
 
-@router.delete("/state/{id}")
-def delete_state_operation_controller(db: SessionDep, id: int):
-    return delete_state_operation(db=db, id=id)
+@state_operation.delete("/{state_operation_id}")
+def delete_state_operation_controller(db: SessionDep, state_operation_id: int):
+    return delete_state_operation(db=db, id=state_operation_id)
