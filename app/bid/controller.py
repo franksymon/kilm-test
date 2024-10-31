@@ -51,7 +51,7 @@ def get_bid_by_id_controller(db: SessionDep, id: int):
     return get_bid_by_id(db=db, id=id)
 
 
-@router.post("/", response_model=BidBaseSchema)
+@router.post("", response_model=BidBaseSchema)
 def create_bid_controller(db: SessionDep, bid: BidCreateSchema,):
     return create_bid(db=db, bid=bid)
 
@@ -63,4 +63,4 @@ def update_bid_controller(db: SessionDep, id: int, bid: BidCreateSchema):
 
 @router.delete("/{id}")
 def delete_bid_controller(db: SessionDep, id: int):
-    return delete_bid(db=db, id=id)
+    return delete_bid(db=db, bid_id=id)

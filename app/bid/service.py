@@ -55,10 +55,10 @@ def create_bid(db: Session, bid: BidCreateSchema):
     
     investor = get_user_by_id(db=db, user_id=bid.investor_id)
     
-    if investor.role.name in [RoleEnum.OPERATOR.value, RoleEnum.ADMIN.value]:
-        raise ResponseHandler.is_not_investor("User", investor.username)
+    if not investor.role.name in [RoleEnum.INVESTOR.value, RoleEnum.ADMIN.value]:
+        raise ResponseHandler.is_not_investor(investor.username)
     
-    operation = get_operation_by_id(db=db, bid_id=bid.operation_id)
+    operation = get_operation_by_id(db=db, id=bid.operation_id)
     
     db_bid = BidEntity.model_validate(bid, update={"created_by": investor.email})
     db.add(db_bid)
@@ -70,10 +70,10 @@ def update_bid(db: Session, bid_id: int, bid: BidCreateSchema):
     
     investor = get_user_by_id(db=db, user_id=bid.investor_id)
     
-    if investor.role.name in [RoleEnum.OPERATOR.value, RoleEnum.ADMIN.value]:
-        raise ResponseHandler.is_not_investor("User", investor.username)
+    if not investor.role.name in [RoleEnum.INVESTOR.value, RoleEnum.ADMIN.value]:
+        raise ResponseHandler.is_not_investor(investor.username)
     
-    operation = get_operation_by_id(db=db, bid_id=bid.operation_id)
+    operation = get_operation_by_id(db=db, id=bid.operation_id)
     
     db_bid = get_bid_by_id(db=db, bid_id=bid_id)
     
