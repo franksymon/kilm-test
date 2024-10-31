@@ -2,7 +2,7 @@ from sqlmodel import Field, SQLModel
 from pydantic import EmailStr
 from app.role.schema import RolePublicSchema
 from typing import Optional
-from app.operation.schema import OperationBaseSchema
+
 
 
 
@@ -12,7 +12,7 @@ class UserBaseSchema(SQLModel):
     username: str  
     full_name: str
     role: Optional[RolePublicSchema]
-    operations: Optional[list[OperationBaseSchema]]
+    is_active: bool
 
 
 class UserCreateSchema(SQLModel):
@@ -35,6 +35,7 @@ class OperatorSchema(SQLModel):
     username: str  
     full_name: str
     role: Optional[RolePublicSchema]
+
 
 class InvestorSchema(OperatorSchema):
     ...

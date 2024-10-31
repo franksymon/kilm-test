@@ -2,9 +2,7 @@ from sqlmodel import Field, SQLModel
 from typing import Optional, TYPE_CHECKING
 from datetime import datetime, date
 from pydantic import field_validator
-
-if TYPE_CHECKING:
-    from app.user.schema import OperatorSchema
+from app.user.schema import OperatorSchema
 
 class StateOperationBaseSchema(SQLModel):
     id: int
