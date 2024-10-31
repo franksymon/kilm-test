@@ -37,12 +37,27 @@ def create_user(db: Session, user: UserCreateSchema, ):
     db.refresh(db_user)
     return db_user
 
-def get_user_by_email(db: Session, email: str, ) -> UserBaseSchema | None:
-    return db.exec(select(UserEntity).where(UserEntity.email == email)).first()
+def get_user_by_email(db: Session, email: str, ):
+    user = db.exec(select(UserEntity).where(UserEntity.email == email)).first()
+    if not user:
+        raise ResponseHandler.not_found_error("User", email)
+    
+    if not user.is_active:
+        raise ResponseHandler.is_not_active("User", user.username)
+    return user
+
+def get_user_by_id(db: Session, user_id: int, ):
+    user = db.get(UserEntity, user_id)
+    if not user:
+        raise ResponseHandler.not_found_error("User", user_id)
+    
+    if not user.is_active:
+        raise ResponseHandler.is_not_active("User", user.username)
+    return user
 
 def get_user_by_username(db: Session, username: str, ):
     return db.exec(select(UserEntity).where(UserEntity.username == username)).first()
-    
+
 def get_all_user(db: Session, params: Params):
     query = select(UserEntity)
     return paginate(db, query, params)
