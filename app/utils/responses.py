@@ -38,6 +38,11 @@ class ResponseHandler:
         raise HTTPException(status_code=status.HTTP_409_CONFLICT, detail=message)
     
     @staticmethod
+    def bad_request(message=None):
+        message = f"{message}"
+        raise HTTPException(status_code=status.HTTP_400_BAD_REQUEST, detail=message)
+    
+    @staticmethod
     def is_not_active(name=""):
         message = f"{name} Not Active!"
         raise HTTPException(status_code=status.HTTP_400_BAD_REQUEST, detail=message)
