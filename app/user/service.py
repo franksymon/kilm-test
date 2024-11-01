@@ -14,7 +14,7 @@ from app.user.model import UserEntity
 from app.role.model import RoleEntity
 
 # Schemas
-from app.user.schema import UserCreateSchema, UserBaseSchema
+from app.user.schema import UserCreateSchema
 
 def create_user(db: Session, user: UserCreateSchema, ):
     
@@ -52,7 +52,7 @@ def get_user_by_id(db: Session, user_id: int, ):
         raise ResponseHandler.not_found_error("User", user_id)
     
     if not user.is_active:
-        raise ResponseHandler.is_not_active("User", user.username)
+        raise ResponseHandler.is_not_active(user.username)
     return user
 
 def get_user_by_username(db: Session, username: str, ):
@@ -62,12 +62,9 @@ def get_all_user(db: Session, params: Params):
     query = select(UserEntity)
     return paginate(db, query, params)
 
-def delete_user(db: Session, email: str):
+def delete_user(db: Session, user_id: int):
     
-    user = get_user_by_email(email=email, db=db)
-    if not user:
-        raise ResponseHandler.not_found_error("User", email)
-    
+    user = get_user_by_id(db, user_id)   
     db.delete(user)
     db.commit()
     return ResponseHandler.delete_success("User", user.id, user)
