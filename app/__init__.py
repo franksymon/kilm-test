@@ -14,6 +14,7 @@ from app.role.controller import router as role_router
 from app.operation.controller import router as operation_router
 from app.operation.controller import state_operation as state_operation_router
 from app.bid.controller import router as bid_router
+from app.transaction.controller import router as transaction_router
 
 
 prefix = settings.API_V1_STR
@@ -56,6 +57,7 @@ def register_routes(app):
     app.include_router(operation_router, prefix=prefix)
     app.include_router(state_operation_router, prefix=prefix)
     app.include_router(bid_router, prefix=prefix)
+    app.include_router(transaction_router, prefix=prefix)
     
 
 def register_error_handlers(app):
