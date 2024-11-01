@@ -19,6 +19,7 @@ from app.bid.schema import BidCreateSchema, BidBaseSchema
 # Models
 from app.user.model import UserEntity
 from app.bid.model import BidEntity
+from app.operation.model import OperationStatus
 
 
 def get_all_bids_by_user_investor(db: Session, user_id: int, params: Params):
@@ -84,6 +85,8 @@ def create_bid(db: Session, bid: BidCreateSchema):
     # Actulizar Operation is_closed si alcanza el monto requerido
     total_operation_amount = sum(x.amount for x in operation.bids)
     if total_operation_amount == operation.amount_required:
+        state = db.exec(select(OperationStatus).where(OperationStatus.name == "COMPLETED")).first()
+        operation.status = state.id
         operation.is_closed = True  
         db.add(operation)
         db.commit()
