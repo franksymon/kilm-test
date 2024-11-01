@@ -24,7 +24,7 @@ class OperationEntity(BaseModel, table=True):
     operator: UserEntity = Relationship(back_populates="operations")
     status: lambda: OperationStatus = Relationship(back_populates="operations")
     bids: list["BidEntity"] = Relationship(back_populates="operations")
-    #transactions: list["TransactionEntity"] = Relationship(back_populates="operations")
+    transactions: list["TransactionEntity"] = Relationship(back_populates="operations")
 
     created_by: str = Field(sa_column=Column(String, nullable=False))
     updated_by: Optional[str] = Field(default=None, nullable=True)

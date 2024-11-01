@@ -29,6 +29,7 @@ class UpdateOperationSchema(SQLModel):
     annual_interest: float | None = None
     deadline: Optional[date] | None = None
     is_closed: bool | None = None
+    status_id: int | None = None
 
 class OperationCreateSchema(SQLModel):
     amount_required: float
@@ -51,9 +52,12 @@ class OperationBidSchema(SQLModel):
     
     status: Optional[StateOperationBaseSchema]
 
+class OperationTransactionSchema(SQLModel):
+    id: int
+    title: str
+
 
 # State Operation
-
 class StateOperationCreateSchema(SQLModel):
     name: str
     description: Optional[str]

@@ -65,6 +65,8 @@ def update_operation(db: Session, operation: OperationEntity):
         db_operation.deadline = operation.deadline        
     if operation.is_closed:
         db_operation.is_closed = operation.is_closed
+    if operation.status_id:
+        db_operation.status_id = operation.status_id
 
     db_operation.updated_by = "user_session"
     db_operation.time_updated = func.now()
