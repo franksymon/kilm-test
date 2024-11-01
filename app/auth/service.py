@@ -1,16 +1,11 @@
 from sqlmodel import Session
 
-
-
 # Models
 from app.user.model import UserEntity
 
 # Services
-from app.user.service import get_user_by_email, get_user_by_username
+from app.user.service import get_user_by_username
 from app.core.security import verify_password
-
-
-
 
 
 def authenticate(db: Session, username: str, password: str) -> UserEntity | None:

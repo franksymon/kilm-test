@@ -4,6 +4,13 @@ from fastapi_pagination import Params
 
 from app.transaction.service import TransactionService
 
+# Config
+from app.core.security import SessionDep, CurrentUser, RoleChecker
+
+# Utils
+from app.utils.dependences import CustomPagePagination as Page
+from app.utils.enum.enum_role import RoleEnum
+
 # Schemas
 from app.transaction.schema import (
     TransactionCreateSchema,
@@ -12,13 +19,10 @@ from app.transaction.schema import (
     TransactionByOperationSchema,
 )
 
-# Config
-from app.core.security import SessionDep, get_current_active_user
 
-# Utils
-from app.utils.dependences import CustomPagePagination as Page
 
-router = APIRouter(tags=["Transaction"], prefix="/transaction")
+role_checker = Depends(RoleChecker(allowed_roles=[RoleEnum.ADMIN.value, RoleEnum.OPERATOR.value, RoleEnum.INVESTOR.value]))
+router = APIRouter(tags=["Transaction"], prefix="/transaction", dependencies=[role_checker])
 service = TransactionService()
 
 # @router.get("/all/by_operation/{operation_id}", response_model=Page[TransactionByOperationSchema])

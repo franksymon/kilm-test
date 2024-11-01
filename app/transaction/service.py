@@ -7,9 +7,6 @@ from datetime import datetime, date
 from app.utils.enum.enum_operation_state import OperationState
 from app.utils.enum.enum_role import RoleEnum
 
-# Config
-from app.core.security import get_current_active_user, get_current_user
-
 # Utils
 from app.utils.responses import ResponseHandler
 

@@ -1,8 +1,8 @@
 from datetime import datetime, timedelta, timezone
-from typing import Any, Annotated
+from typing import Any, Annotated, List
 from fastapi import Depends
-from sqlmodel import Session
-from jwt import exceptions, encode, decode
+from sqlmodel import Session, select
+import jwt
 from fastapi.security import OAuth2PasswordBearer
 from pydantic import ValidationError
 from passlib.context import CryptContext
@@ -28,7 +28,6 @@ reusable_oauth2 = OAuth2PasswordBearer(
 pwd_context = CryptContext(schemes=["bcrypt"], deprecated="auto")
 TokenDep = Annotated[str, Depends(reusable_oauth2)]
 SessionDep = Annotated[Session, Depends(get_session)]
-CurrentUser = Annotated[UserEntity, Depends(lambda: get_current_user)]
 
 
 def verify_password(plain_password: str, hashed_password: str) -> bool:
@@ -39,18 +38,25 @@ def hash_password(password: str) -> str:
     return pwd_context.hash(password)
 
 
-def get_current_user(db: SessionDep, token: TokenDep) -> UserEntity:
+def verify_token(token: TokenDep) -> TokenPayload:
     try:
-        payload = decode(token, settings.SECRET_KEY, algorithms=[settings.ALGORITHM])
+        payload = jwt.decode(token, settings.SECRET_KEY, algorithms=settings.ALGORITHM)
         token_data = TokenPayload(**payload)
-    except (exceptions.InvalidTokenError, ValidationError):
+    except (jwt.exceptions.InvalidTokenError, ValidationError):
         raise ResponseHandler.invalid_token('access')
+    
+    return token_data
+
+
+def get_current_user(db: SessionDep, token: TokenDep) -> UserEntity:
+    
+    token_data = verify_token(token)    
     
     user = db.get(UserEntity, token_data.sub)
     if not user:
         raise ResponseHandler.not_found_error("User")
     if not user.is_active:
-        raise ResponseHandler.is_not_active(f" User {user.username}")
+        raise ResponseHandler.is_not_active(f" User id {user.id}")
     return user
 
 
@@ -58,32 +64,25 @@ def create_access_token(user: UserEntity | Any, expires_delta: timedelta) -> str
     expire = datetime.now(timezone.utc) + expires_delta
     to_encode = {
         "exp": expire,
-        "sub": str(user.id),
+        "sub": user.id,
         "email": user.email,
         "role": user.role.name,
     }
-    encoded_jwt = encode(to_encode, settings.SECRET_KEY, algorithm=settings.ALGORITHM)
+    encoded_jwt = jwt.encode(to_encode, settings.SECRET_KEY, algorithm=settings.ALGORITHM)
     return encoded_jwt
 
 
-def get_current_active_user(
-    current_user: CurrentUser,
-):
-    if not current_user.is_active:
-        raise ResponseHandler.is_not_active(f" User {current_user.username}")
-    return current_user
+CurrentUser = Annotated[UserEntity, Depends (get_current_user)]
 
 
-# class RoleChecker:
-#     def __init__(self, allowed_roles: List[str]) -> None:
-#         self.allowed_roles = allowed_roles
+class RoleChecker:
+    def __init__(self, allowed_roles: List[str]) -> None:
+        self.allowed_roles = allowed_roles
 
-#     def __call__(self, current_user: User = Depends(get_current_user)) -> Any:
-#         if not current_user.is_verified:
-#             raise AccountNotVerified()
-#         if current_user.role in self.allowed_roles:
-#             return True
+    def __call__(self, current_user = Depends(verify_token)) -> Any:
+        if current_user.role in self.allowed_roles:
+            return True
 
-#         raise InsufficientPermission()
+        raise ResponseHandler.insufficient_permissions()
 
 

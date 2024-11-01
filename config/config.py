@@ -9,7 +9,8 @@ class Settings(BaseSettings):
     PROJECT_NAME: str = "Prueba Tecnica FastAPI - Klimb"
     API_V1_STR: str = "/api/v1"
     ALGORITHM : str = "HS256"
-    SECRET_KEY: str = secrets.token_urlsafe(32)
+    #SECRET_KEY: str = secrets.token_urlsafe(32)
+    SECRET_KEY: str = '12345678901234567890123456789012'
     ACCESS_TOKEN_EXPIRE_MINUTES: int = 60 * 24 * 8
 
 

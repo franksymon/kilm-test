@@ -1,14 +1,16 @@
 from sqlmodel import Field, SQLModel
 
 
-class Token(SQLModel):
+class TokenSchema(SQLModel):
 
     access_token: str
     token_type: str = "bearer"
 
 class TokenPayload(SQLModel):
-    sub: str
+    sub: int
     exp: int
+    email: str
+    role: str
 
 class NewPassword(SQLModel):
 
