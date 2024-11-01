@@ -2,7 +2,7 @@
 
 Este proyecto expone, a través del lenguaje **Python versión 3.11**, framework **fastapi**, ORM **sqlmodel**, las apis necesarias para cumplimiento de test 
 
-Para la arquitectura del proyecto, se implementa una estructura API REST con las siguientes capas:
+Para la arquitectura del proyecto, se implementa una estructura API REST, por modulos con las siguientes capas:
 * **Controller**: Carpeta que contiene los controladores o routers.
 * **Services**: Carpeta que contiene la capa lógica de los controladores.
 * **Model**: Carpeta que contiene la capa lógica de los Modelos en Base de datos.
@@ -10,7 +10,6 @@ Para la arquitectura del proyecto, se implementa una estructura API REST con las
 
 * **Config**: Carpeta que contiene archivos de definiciones de variables de entorno por parte del cliente.
 * **Util**: Carpeta que contiene funciones comunes.
-* **Tools**: Carpeta que contiene la librería proporcionada por el fabricante de la impresora fiscal Tfhka V-8.5 (**integration@thefactoryhka.com**).
 
 ### Entorno Virtual
 
